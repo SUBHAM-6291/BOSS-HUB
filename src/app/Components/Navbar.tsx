@@ -18,8 +18,8 @@ const Navbar = () => {
     "/our-work",
     "/about-us",
     "/contact-us",
-    "/login",
-    "/signup"
+    "/sign-in",
+    "/sign-up"
   ];
 
   return (

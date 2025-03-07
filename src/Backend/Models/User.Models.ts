@@ -1,31 +1,16 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { formatDate } from '../utils/dateUtils';
-
-
-export interface Message extends Document {
-  _id: string;
-  content: string;
-  createdAt: string;
-}
-
-const messageSchema: Schema<Message> = new Schema({
-  content: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: String,
-    required: true,
-    default: formatDate,
-  },
-});
+import { applyUserMiddleware } from '../Middleware/Middleware';  // Adjust path
 
 export interface User extends Document {
+  _id: mongoose.Types.ObjectId; // Explicitly define _id
   username: string;
   email: string;
   password: string;
-  messages: Message[];
+  createdAt: Date;
+  updatedAt: Date;
   generateAuthToken: () => string;
+  comparePassword: (candidatePassword: string) => Promise<boolean>;
+  generateRefreshToken: () => string;
 }
 
 const userSchema: Schema<User> = new Schema({
@@ -46,11 +31,12 @@ const userSchema: Schema<User> = new Schema({
     type: String,
     required: [true, 'Password is required'],
   },
-  messages: [messageSchema],
+}, {
+  timestamps: true,
 });
 
-export const MessageModel: Model<Message> =
-  mongoose.models.Message || mongoose.model<Message>('Message', messageSchema);
+applyUserMiddleware(userSchema);
+
 export const UserModel: Model<User> =
   mongoose.models.User || mongoose.model<User>('User', userSchema);
 
