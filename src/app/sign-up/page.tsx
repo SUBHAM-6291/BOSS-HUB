@@ -4,9 +4,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { z } from 'zod'; 
+import { z } from 'zod';
 import { signupSchema } from '@/Backend/Schema/Sigup.schema';
-
+import { signIn } from 'next-auth/react';
 
 type FormData = z.infer<typeof signupSchema>;
 
@@ -17,36 +17,62 @@ export default function SignUpPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<FormData>({
     resolver: zodResolver(signupSchema),
-    defaultValues: {
-      username: '',
-      email: '',
-      password: '',
-    },
+    defaultValues: { username: '', email: '', password: '' },
   });
 
   const onSubmit = async (data: FormData) => {
     setServerError('');
     try {
-      const res = await fetch('/api/auth/sign-up', {
+      console.log('Submitting signup data:', { ...data, password: '[hidden]' });
+      const res = await fetch('/api/auth/register', { // Updated to match logs
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+
       if (res.ok) {
-        router.push('/dashboard');
+        console.log('Signup successful, attempting sign-in...');
+        const signInResult = await signIn('credentials', {
+          redirect: false,
+          email: data.email,
+          password: data.password,
+        });
+
+        console.log('Sign-in result:', signInResult);
+
+        if (signInResult?.ok) {
+          console.log('Sign-in successful, redirecting to /dashboard');
+          router.push('/dashboard');
+        } else {
+          setServerError('Failed to sign in after registration. Please try logging in.');
+          console.error('Sign-in failed:', signInResult?.error || 'Unknown error');
+        }
       } else {
         const { message } = await res.json();
         setServerError(message);
+        console.error('Signup failed:', message);
       }
     } catch (error) {
+      console.error('Signup error:', error);
       setServerError('An error occurred. Please try again.');
     }
   };
 
-  const handleOAuth = (provider: 'google' | 'github') => {
-    window.location.href = `/api/auth/${provider}`;
+  const handleOAuthSignIn = async (provider: 'google' | 'github') => {
+    setServerError('');
+    try {
+      const result = await signIn(provider, { redirect: false });
+      if (result?.ok) {
+        router.push('/dashboard');
+      } else {
+        setServerError(`Failed to sign in with ${provider}. Please try again.`);
+      }
+    } catch (error) {
+      console.error(`OAuth error (${provider}):`, error);
+      setServerError('An error occurred during OAuth sign-in.');
+    }
   };
 
   return (
@@ -120,7 +146,7 @@ export default function SignUpPage() {
 
         <div className="mt-6 space-y-4">
           <button
-            onClick={() => handleOAuth('google')}
+            onClick={() => handleOAuthSignIn('google')}
             className="w-full py-3 bg-white text-black rounded-md font-semibold hover:bg-gray-200 flex items-center justify-center gap-2"
             disabled={isSubmitting}
           >
@@ -134,7 +160,7 @@ export default function SignUpPage() {
           </button>
 
           <button
-            onClick={() => handleOAuth('github')}
+            onClick={() => handleOAuthSignIn('github')}
             className="w-full py-3 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 flex items-center justify-center gap-2"
             disabled={isSubmitting}
           >

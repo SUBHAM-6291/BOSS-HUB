@@ -1,11 +1,14 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { applyUserMiddleware } from '../Middleware/Middleware';  // Adjust path
+import { applyUserMiddleware } from '../Middleware/Middleware';
 
 export interface User extends Document {
-  _id: mongoose.Types.ObjectId; // Explicitly define _id
+  _id: mongoose.Types.ObjectId;
   username: string;
   email: string;
   password: string;
+  name?: string;
+  image?: string;
+  profilePic?: string;
   createdAt: Date;
   updatedAt: Date;
   generateAuthToken: () => string;
@@ -25,19 +28,30 @@ const userSchema: Schema<User> = new Schema({
     required: [true, 'Email is required'],
     unique: true,
     trim: true,
-    match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Please enter a valid email address'],
+    match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Please enter a valid email'],
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
+    
+  },
+  name: {
+    type: String,
+    default: '',
+  },
+  image: {
+    type: String,
+    default: '',
+  },
+  profilePic: {
+    type: String,
+    default: '',
   },
 }, {
   timestamps: true,
 });
 
+// Apply the middleware
 applyUserMiddleware(userSchema);
 
-export const UserModel: Model<User> =
-  mongoose.models.User || mongoose.model<User>('User', userSchema);
-
-export default userSchema;
+const UserModel: Model<User> = mongoose.models.User || mongoose.model<User>('User', userSchema);
+export default UserModel;
