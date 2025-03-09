@@ -50,7 +50,7 @@ const userSchema: Schema<User> = new Schema({
   timestamps: true,
 });
 
-// Apply the middleware
+
 applyUserMiddleware(userSchema);
 
 const UserModel: Model<User> = mongoose.models.User || mongoose.model<User>('User', userSchema);

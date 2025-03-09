@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
-import DATABASE_NAME from "./Db.Name";
 
 type ConnectionObject = {
   isConnected?: number;

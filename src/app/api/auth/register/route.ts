@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newUser = new UserModel({ username, email, password }); // Middleware hashes password
+    const newUser = new UserModel({ username, email, password }); 
     await newUser.save();
 
     return NextResponse.json(

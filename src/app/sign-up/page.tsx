@@ -6,72 +6,36 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { z } from 'zod';
 import { signupSchema } from '@/Backend/Schema/Sigup.schema';
-import { signIn } from 'next-auth/react';
+import { signInWithCredentials, signInWithOAuth, registerUser } from '@/Backend/tools/auth';
 
 type FormData = z.infer<typeof signupSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
   const [serverError, setServerError] = useState('');
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: { username: '', email: '', password: '' },
   });
 
   const onSubmit = async (data: FormData) => {
-    setServerError('');
+    setServerError(''); 
     try {
-      console.log('Submitting signup data:', { ...data, password: '[hidden]' });
-      const res = await fetch('/api/auth/register', { // Updated to match logs
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (res.ok) {
-        console.log('Signup successful, attempting sign-in...');
-        const signInResult = await signIn('credentials', {
-          redirect: false,
-          email: data.email,
-          password: data.password,
-        });
-
-        console.log('Sign-in result:', signInResult);
-
-        if (signInResult?.ok) {
-          console.log('Sign-in successful, redirecting to /dashboard');
-          router.push('/dashboard');
-        } else {
-          setServerError('Failed to sign in after registration. Please try logging in.');
-          console.error('Sign-in failed:', signInResult?.error || 'Unknown error');
-        }
-      } else {
-        const { message } = await res.json();
-        setServerError(message);
-        console.error('Signup failed:', message);
-      }
+      await registerUser(data);
+      const signInResult = await signInWithCredentials(data.email, data.password);
+      if (signInResult?.ok) router.push('/dashboard');
+      else setServerError('sign-up failed ');
     } catch (error) {
-      console.error('Signup error:', error);
-      setServerError('An error occurred. Please try again.');
+      setServerError('try again if not then contact your developer.');
     }
   };
 
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
-    setServerError('');
     try {
-      const result = await signIn(provider, { redirect: false });
-      if (result?.ok) {
-        router.push('/dashboard');
-      } else {
-        setServerError(`Failed to sign in with ${provider}. Please try again.`);
-      }
+      await signInWithOAuth(provider);
+      router.push('/dashboard');
     } catch (error) {
-      console.error(`OAuth error (${provider}):`, error);
-      setServerError('An error occurred during OAuth sign-in.');
+     throw new Error(" dashboard not open contact your developer ")
     }
   };
 
@@ -79,12 +43,9 @@ export default function SignUpPage() {
     <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="w-full max-w-md p-8 rounded-lg bg-gray-900">
         <h1 className="text-3xl font-bold text-center mb-6 text-white">Sign Up</h1>
-
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-white">
-              Username
-            </label>
+            <label htmlFor="username" className="block text-sm font-medium text-white">Username</label>
             <input
               id="username"
               {...register('username')}
@@ -92,15 +53,10 @@ export default function SignUpPage() {
               placeholder="Enter your username"
               disabled={isSubmitting}
             />
-            {errors.username && (
-              <p className="mt-1 text-sm text-red-400">{errors.username.message}</p>
-            )}
+            {errors.username && <p className="mt-1 text-sm text-red-400">{errors.username.message}</p>}
           </div>
-
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-white">
-              Email
-            </label>
+            <label htmlFor="email" className="block text-sm font-medium text-white">Email</label>
             <input
               id="email"
               type="email"
@@ -109,15 +65,10 @@ export default function SignUpPage() {
               placeholder="Enter your email"
               disabled={isSubmitting}
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>}
           </div>
-
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-white">
-              Password
-            </label>
+            <label htmlFor="password" className="block text-sm font-medium text-white">Password</label>
             <input
               id="password"
               type="password"
@@ -126,24 +77,17 @@ export default function SignUpPage() {
               placeholder="Enter your password"
               disabled={isSubmitting}
             />
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-400">{errors.password.message}</p>
-            )}
+            {errors.password && <p className="mt-1 text-sm text-red-400">{errors.password.message}</p>}
           </div>
-
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-md font-semibold disabled:bg-purple-400"
+            className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-md font-semibold disabled:bg-purple-400 text-white"
           >
             {isSubmitting ? 'Signing Up...' : 'Sign Up'}
           </button>
         </form>
-
-        {serverError && (
-          <p className="mt-4 text-center text-sm text-red-400">{serverError}</p>
-        )}
-
+        {serverError && <p className="mt-4 text-center text-sm text-red-400">{serverError}</p>}
         <div className="mt-6 space-y-4">
           <button
             onClick={() => handleOAuthSignIn('google')}
@@ -158,7 +102,6 @@ export default function SignUpPage() {
             </svg>
             Sign up with Google
           </button>
-
           <button
             onClick={() => handleOAuthSignIn('github')}
             className="w-full py-3 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 flex items-center justify-center gap-2"
