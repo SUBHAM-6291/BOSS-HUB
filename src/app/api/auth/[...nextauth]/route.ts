@@ -84,8 +84,8 @@ export const authOptions: NextAuthOptions = {
           session.user = session.user || { id: '', username: '', email: '', name: null, image: null };
           session.user.id = dbUser._id.toString();
           session.user.username = dbUser.username;
-          session.user.email = dbUser.email; // Optional: Ensure email is set
-          session.user.name = dbUser.name || null; // Optional: Ensure name is set
+          session.user.email = dbUser.email;
+          session.user.name = dbUser.name || null;
         }
       }
       return session;

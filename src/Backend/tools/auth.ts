@@ -1,4 +1,3 @@
-
 import { signIn } from 'next-auth/react';
 
 export async function signInWithCredentials(email: string, password: string) {
@@ -28,4 +27,23 @@ export async function registerUser(data: { username: string; email: string; pass
     throw new Error(message);
   }
   return res;
+}
+
+export async function SaveCeoDeatils(data: {
+  username: string;
+  email: string;
+  name: string;
+  UserId: string;
+}) {
+  const ceoresponse = await fetch('/api/auth/ceo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!ceoresponse.ok) {
+    const { message } = await ceoresponse.json();
+    throw new Error(message);
+  }
+  return ceoresponse;
 }

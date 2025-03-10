@@ -7,7 +7,7 @@ export interface User extends Document {
   email: string;
   password: string;
   name?: string;
-  image?: string;
+
   profilePic?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -38,10 +38,7 @@ const userSchema: Schema<User> = new Schema({
     type: String,
     default: '',
   },
-  image: {
-    type: String,
-    default: '',
-  },
+ 
   profilePic: {
     type: String,
     default: '',

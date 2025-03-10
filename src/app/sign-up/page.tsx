@@ -13,7 +13,7 @@ type FormData = z.infer<typeof signupSchema>;
 export default function SignUpPage() {
   const router = useRouter();
   const [serverError, setServerError] = useState('');
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: { username: '', email: '', password: '' },
   });
