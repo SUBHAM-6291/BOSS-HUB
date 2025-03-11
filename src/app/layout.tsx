@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./Components/Navbar";
-import AuthProvider from '@/Backend/Sessionwraper/sessionwraper';
+import AuthProvider from "@/Backend/Sessionwraper/sessionwraper";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+ // Import utility function
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,15 +27,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Use inside function
+
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <AuthProvider>  {}
-          <Navbar />
-          {children}
-        </AuthProvider>  {}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarTrigger />
+          <AuthProvider>
+            {/* Conditionally render Navbar */}
+            
+            <main>{children}</main>
+          </AuthProvider>
+        </SidebarProvider>
       </body>
     </html>
   );

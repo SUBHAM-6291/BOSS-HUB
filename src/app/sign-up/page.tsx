@@ -26,7 +26,7 @@ export default function SignUpPage() {
       if (signInResult?.ok) router.push('/dashboard');
       else setServerError('sign-up failed ');
     } catch (error) {
-      setServerError('try again if not then contact your developer.');
+      setServerError('pls fill your details in correct format ');
     }
   };
 
