@@ -15,6 +15,7 @@ import {
   Moon,
   Sun,
 } from "lucide-react";
+import { FaRobot, FaPaperPlane } from "react-icons/fa";
 import {
   Sidebar,
   SidebarContent,
@@ -33,9 +34,58 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import Guage from "@/app/Components/Ceo-/Guage";
 import Managers from "@/app/Components/Ceo-/Managers";
-import Attendence from "@/app/Components/Ceo-/Attendence"; // Fixed spelling in import
+import Attendence from "@/app/Components/Ceo-/Attendence";
+import Performance from "@/app/Components/Ceo-/Performance";
+import BudgetsExpenses from "@/app/Components/Ceo-/BudgetsExpenses";
+import Approvals from "@/app/Components/Ceo-/Approvals";
+import Messaging from "@/app/Components/Ceo-/Messaging";
+import Alerts from "@/app/Components/Ceo-/Alerts";
+import Reports from "@/app/Components/Ceo-/Reports";
+import CompanyOverview from "@/app/Components/Ceo-/CompanyOverview";
+import UserManagement from "@/app/Components/Ceo-/UserManagement";
+import SettingsComponent from "@/app/Components/Ceo-/SettingsComponent";
+
+const AiSuggestion = () => {
+  return (
+    <div className="p-4">
+      <Card className="w-full max-w-md bg-white shadow-lg rounded-lg flex flex-col">
+        <CardHeader className="p-4">
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <FaRobot className="text-[#1E90FF]" />
+            Chat with AI Insights
+          </CardTitle>
+          <CardDescription className="text-gray-600">
+            Talk to our AI for company suggestions
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1 p-4 bg-[#F9FAFB]">
+          <div className="text-center text-gray-500">
+            Start chatting here...
+          </div>
+        </CardContent>
+        <div className="p-4 border-t flex items-center gap-2">
+          <Input
+            placeholder="Type your message..."
+            className="flex-1 border-gray-300"
+          />
+          <Button className="bg-[#1E90FF] hover:bg-[#1C86EE] text-white">
+            <FaPaperPlane />
+          </Button>
+        </div>
+      </Card>
+    </div>
+  );
+};
 
 const sidebarItems = [
   {
@@ -51,7 +101,7 @@ const sidebarItems = [
     category: "Financials & Approvals",
     items: [
       { title: "Budgets & Expenses", url: "#", icon: DollarSign },
-      { title: "Payroll Forecast", url: "#", icon: BarChart },
+      { title: "AI Insights", url: "#", icon: FaRobot },
       { title: "Approvals", url: "#", icon: CheckCircle },
     ],
   },
@@ -105,14 +155,34 @@ export function ModeToggle() {
   );
 }
 
-export function AppSidebar({ 
-  toggleGauge, 
+export function AppSidebar({
+  toggleGauge,
   toggleManagers,
-  toggleAttendance // Added new prop
-}: { 
+  toggleAttendance,
+  togglePerformance,
+  toggleBudgetsExpenses,
+  togglePayrollForecast,
+  toggleApprovals,
+  toggleMessaging,
+  toggleAlerts,
+  toggleReports,
+  toggleCompanyOverview,
+  toggleUserManagement,
+  toggleSettings,
+}: {
   toggleGauge: () => void;
   toggleManagers: () => void;
-  toggleAttendance: () => void; // Added new prop type
+  toggleAttendance: () => void;
+  togglePerformance: () => void;
+  toggleBudgetsExpenses: () => void;
+  togglePayrollForecast: () => void;
+  toggleApprovals: () => void;
+  toggleMessaging: () => void;
+  toggleAlerts: () => void;
+  toggleReports: () => void;
+  toggleCompanyOverview: () => void;
+  toggleUserManagement: () => void;
+  toggleSettings: () => void;
 }) {
   const { theme } = useTheme();
 
@@ -141,12 +211,32 @@ export function AppSidebar({
                         asChild
                         className={`w-full flex items-center p-2 rounded-lg ${textColor} ${hoverBgColor} transition-all`}
                         onClick={
-                          item.title === "Dashboard" 
-                            ? toggleGauge 
-                            : item.title === "Managers" 
-                            ? toggleManagers 
+                          item.title === "Dashboard"
+                            ? toggleGauge
+                            : item.title === "Managers"
+                            ? toggleManagers
                             : item.title === "Attendance"
-                            ? toggleAttendance // Added attendance toggle
+                            ? toggleAttendance
+                            : item.title === "Performance"
+                            ? togglePerformance
+                            : item.title === "Budgets & Expenses"
+                            ? toggleBudgetsExpenses
+                            : item.title === "AI Insights"
+                            ? togglePayrollForecast
+                            : item.title === "Approvals"
+                            ? toggleApprovals
+                            : item.title === "Messaging"
+                            ? toggleMessaging
+                            : item.title === "Alerts"
+                            ? toggleAlerts
+                            : item.title === "Reports"
+                            ? toggleReports
+                            : item.title === "Company Overview"
+                            ? toggleCompanyOverview
+                            : item.title === "User Management"
+                            ? toggleUserManagement
+                            : item.title === "Settings"
+                            ? toggleSettings
                             : undefined
                         }
                       >
@@ -174,41 +264,261 @@ export default function Page() {
   const textColor = theme === "dark" ? "text-white" : "text-gray-900";
   const [showGauge, setShowGauge] = useState(true);
   const [showManagers, setShowManagers] = useState(false);
-  const [showAttendance, setShowAttendance] = useState(false); // Fixed naming
+  const [showAttendance, setShowAttendance] = useState(false);
+  const [showPerformance, setShowPerformance] = useState(false);
+  const [showBudgetsExpenses, setShowBudgetsExpenses] = useState(false);
+  const [showPayrollForecast, setShowPayrollForecast] = useState(false);
+  const [showApprovals, setShowApprovals] = useState(false);
+  const [showMessaging, setShowMessaging] = useState(false);
+  const [showAlerts, setShowAlerts] = useState(false);
+  const [showReports, setShowReports] = useState(false);
+  const [showCompanyOverview, setShowCompanyOverview] = useState(false);
+  const [showUserManagement, setShowUserManagement] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const toggleGauge = () => {
     setShowGauge(!showGauge);
     setShowManagers(false);
-    setShowAttendance(false); // Fixed naming
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
   };
 
   const toggleManagers = () => {
     setShowManagers(!showManagers);
     setShowGauge(false);
-    setShowAttendance(false); // Fixed naming
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
   };
 
-  const toggleAttendance = () => { // Fixed naming and spelling
+  const toggleAttendance = () => {
     setShowAttendance(!showAttendance);
-    setShowManagers(false);
     setShowGauge(false);
+    setShowManagers(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+  };
+
+  const togglePerformance = () => {
+    setShowPerformance(!showPerformance);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+  };
+
+  const toggleBudgetsExpenses = () => {
+    setShowBudgetsExpenses(!showBudgetsExpenses);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+  };
+
+  const togglePayrollForecast = () => {
+    setShowPayrollForecast(!showPayrollForecast);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+  };
+
+  const toggleApprovals = () => {
+    setShowApprovals(!showApprovals);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+  };
+
+  const toggleMessaging = () => {
+    setShowMessaging(!showMessaging);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+  };
+
+  const toggleAlerts = () => {
+    setShowAlerts(!showAlerts);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+  };
+
+  const toggleReports = () => {
+    setShowReports(!showReports);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+  };
+
+  const toggleCompanyOverview = () => {
+    setShowCompanyOverview(!showCompanyOverview);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+  };
+
+  const toggleUserManagement = () => {
+    setShowUserManagement(!showUserManagement);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowSettings(false);
+  };
+
+  const toggleSettings = () => {
+    setShowSettings(!showSettings);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
   };
 
   return (
     <div className="">
-      <AppSidebar 
-        toggleGauge={toggleGauge} 
+      <AppSidebar
+        toggleGauge={toggleGauge}
         toggleManagers={toggleManagers}
-        toggleAttendance={toggleAttendance} // Added new prop
+        toggleAttendance={toggleAttendance}
+        togglePerformance={togglePerformance}
+        toggleBudgetsExpenses={toggleBudgetsExpenses}
+        togglePayrollForecast={togglePayrollForecast}
+        toggleApprovals={toggleApprovals}
+        toggleMessaging={toggleMessaging}
+        toggleAlerts={toggleAlerts}
+        toggleReports={toggleReports}
+        toggleCompanyOverview={toggleCompanyOverview}
+        toggleUserManagement={toggleUserManagement}
+        toggleSettings={toggleSettings}
       />
       <main className="">
         <div className="flex justify-end p-3 fixed top-0 right-0">
           <ModeToggle />
         </div>
-        <div className="p-6">
+        <div className="">
           {showGauge && <Guage />}
           {showManagers && <Managers />}
-          {showAttendance && <Attendence />} {/* Fixed naming and condition */}
+          {showAttendance && <Attendence />}
+          {showPerformance && <Performance />}
+          {showBudgetsExpenses && <BudgetsExpenses />}
+          {showPayrollForecast && <AiSuggestion />} {}
+          {showApprovals && <Approvals />}
+          {showMessaging && <Messaging />}
+          {showAlerts && <Alerts />}
+          {showReports && <Reports />}
+          {showCompanyOverview && <CompanyOverview />}
+          {showUserManagement && <UserManagement />}
+          {showSettings && <SettingsComponent />}
         </div>
       </main>
     </div>
