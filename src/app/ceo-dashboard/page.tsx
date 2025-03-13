@@ -1,19 +1,17 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Calendar,
   Home,
-  Inbox,
-  Search,
-  Settings,
   Users,
   BarChart,
   DollarSign,
-  Bell,
-  FileText,
   CheckCircle,
   MessageCircle,
+  Bell,
+  FileText,
+  Settings,
   Moon,
   Sun,
 } from "lucide-react";
@@ -35,9 +33,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-
-import Guage from '@/app/Components/Guage'
+import Guage from "@/app/Components/Ceo-/Guage";
+import Managers from "@/app/Components/Ceo-/Managers";
+import Attendence from "@/app/Components/Ceo-/Attendence"; // Fixed spelling in import
 
 const sidebarItems = [
   {
@@ -86,7 +84,7 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button  className="mr-auto"variant="outline" size="icon">
+        <Button className="mr-auto" variant="outline" size="icon">
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
@@ -107,7 +105,15 @@ export function ModeToggle() {
   );
 }
 
-export function AppSidebar() {
+export function AppSidebar({ 
+  toggleGauge, 
+  toggleManagers,
+  toggleAttendance // Added new prop
+}: { 
+  toggleGauge: () => void;
+  toggleManagers: () => void;
+  toggleAttendance: () => void; // Added new prop type
+}) {
   const { theme } = useTheme();
 
   const textColor = theme === "dark" ? "text-white" : "text-gray-700";
@@ -122,7 +128,9 @@ export function AppSidebar() {
         <SidebarContent className="p-4">
           {sidebarItems.map((group) => (
             <SidebarGroup key={group.category}>
-              <SidebarGroupLabel className={`text-lg font-semibold ${headingColor} mb-3`}>
+              <SidebarGroupLabel
+                className={`text-lg font-semibold ${headingColor} mb-3`}
+              >
                 {group.category}
               </SidebarGroupLabel>
               <SidebarGroupContent>
@@ -132,6 +140,15 @@ export function AppSidebar() {
                       <SidebarMenuButton
                         asChild
                         className={`w-full flex items-center p-2 rounded-lg ${textColor} ${hoverBgColor} transition-all`}
+                        onClick={
+                          item.title === "Dashboard" 
+                            ? toggleGauge 
+                            : item.title === "Managers" 
+                            ? toggleManagers 
+                            : item.title === "Attendance"
+                            ? toggleAttendance // Added attendance toggle
+                            : undefined
+                        }
                       >
                         <a href={item.url} className="flex items-center space-x-3">
                           <item.icon className={`w-5 h-5 ${iconColor}`} />
@@ -155,23 +172,44 @@ export function AppSidebar() {
 export default function Page() {
   const { theme } = useTheme();
   const textColor = theme === "dark" ? "text-white" : "text-gray-900";
+  const [showGauge, setShowGauge] = useState(true);
+  const [showManagers, setShowManagers] = useState(false);
+  const [showAttendance, setShowAttendance] = useState(false); // Fixed naming
+
+  const toggleGauge = () => {
+    setShowGauge(!showGauge);
+    setShowManagers(false);
+    setShowAttendance(false); // Fixed naming
+  };
+
+  const toggleManagers = () => {
+    setShowManagers(!showManagers);
+    setShowGauge(false);
+    setShowAttendance(false); // Fixed naming
+  };
+
+  const toggleAttendance = () => { // Fixed naming and spelling
+    setShowAttendance(!showAttendance);
+    setShowManagers(false);
+    setShowGauge(false);
+  };
 
   return (
     <div className="">
-      <AppSidebar />
-      <main className=" ">
-        <div className=" flex ml-[126vh] fixed top-3 border-white">
-        
+      <AppSidebar 
+        toggleGauge={toggleGauge} 
+        toggleManagers={toggleManagers}
+        toggleAttendance={toggleAttendance} // Added new prop
+      />
+      <main className="">
+        <div className="flex justify-end p-3 fixed top-0 right-0">
           <ModeToggle />
         </div>
-
-
-<div className=" ml-auto flex ">
-  <Guage/>
-</div>
-
-
-       
+        <div className="p-6">
+          {showGauge && <Guage />}
+          {showManagers && <Managers />}
+          {showAttendance && <Attendence />} {/* Fixed naming and condition */}
+        </div>
       </main>
     </div>
   );

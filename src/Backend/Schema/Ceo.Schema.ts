@@ -1,10 +1,13 @@
-import { z } from "zod";
+// Backend/Schema/Ceo.Schema.ts
+import { z } from 'zod';
 
 export const CeoZodvalidation = z.object({
-  email: z.string().min(1, { message: "Email or username is required" }),
-  username: z.string().min(1, { message: "pls enter your username in correct format " }),
-  UserId: z.string().min(10, { message: "Please click on generate" }),
-  name:z.string().min(5,{message:"pls enter your username atlest 5 charchters"})
+  UserId: z.string().min(1, 'User ID is required'),
+  username: z.string().min(1, 'Username is required'),
+  email: z.string().email('Invalid email').min(1, 'Email is required'),
+  name: z.string().optional(),
+  image: z.string().optional(),       
+  profilePic: z.string().optional(),  
 });
 
-export type CeoZodtype = z.infer<typeof CeoZodvalidation>;
+export type CeoFormData = z.infer<typeof CeoZodvalidation>;
