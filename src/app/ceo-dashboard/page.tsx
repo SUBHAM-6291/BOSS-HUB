@@ -34,14 +34,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import Guage from "@/app/Components/Ceo-/Guage";
 import Managers from "@/app/Components/Ceo-/Managers";
 import Attendence from "@/app/Components/Ceo-/Attendence";
@@ -54,38 +46,7 @@ import Reports from "@/app/Components/Ceo-/Reports";
 import CompanyOverview from "@/app/Components/Ceo-/CompanyOverview";
 import UserManagement from "@/app/Components/Ceo-/UserManagement";
 import SettingsComponent from "@/app/Components/Ceo-/SettingsComponent";
-
-const AiSuggestion = () => {
-  return (
-    <div className="p-4">
-      <Card className="w-full max-w-md bg-white shadow-lg rounded-lg flex flex-col">
-        <CardHeader className="p-4">
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <FaRobot className="text-[#1E90FF]" />
-            Chat with AI Insights
-          </CardTitle>
-          <CardDescription className="text-gray-600">
-            Talk to our AI for company suggestions
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 p-4 bg-[#F9FAFB]">
-          <div className="text-center text-gray-500">
-            Start chatting here...
-          </div>
-        </CardContent>
-        <div className="p-4 border-t flex items-center gap-2">
-          <Input
-            placeholder="Type your message..."
-            className="flex-1 border-gray-300"
-          />
-          <Button className="bg-[#1E90FF] hover:bg-[#1C86EE] text-white">
-            <FaPaperPlane />
-          </Button>
-        </div>
-      </Card>
-    </div>
-  );
-};
+import AiSuggestion from "../Components/Ceo-/AiSuggestion";
 
 const sidebarItems = [
   {
@@ -155,6 +116,22 @@ export function ModeToggle() {
   );
 }
 
+interface AppSidebarProps {
+  toggleGauge: () => void;
+  toggleManagers: () => void;
+  toggleAttendance: () => void;
+  togglePerformance: () => void;
+  toggleBudgetsExpenses: () => void;
+  togglePayrollForecast: () => void;
+  toggleApprovals: () => void;
+  toggleMessaging: () => void;
+  toggleAlerts: () => void;
+  toggleReports: () => void;
+  toggleCompanyOverview: () => void;
+  toggleUserManagement: () => void;
+  toggleSettings: () => void;
+}
+
 export function AppSidebar({
   toggleGauge,
   toggleManagers,
@@ -169,21 +146,7 @@ export function AppSidebar({
   toggleCompanyOverview,
   toggleUserManagement,
   toggleSettings,
-}: {
-  toggleGauge: () => void;
-  toggleManagers: () => void;
-  toggleAttendance: () => void;
-  togglePerformance: () => void;
-  toggleBudgetsExpenses: () => void;
-  togglePayrollForecast: () => void;
-  toggleApprovals: () => void;
-  toggleMessaging: () => void;
-  toggleAlerts: () => void;
-  toggleReports: () => void;
-  toggleCompanyOverview: () => void;
-  toggleUserManagement: () => void;
-  toggleSettings: () => void;
-}) {
+}: AppSidebarProps) {
   const { theme } = useTheme();
 
   const textColor = theme === "dark" ? "text-white" : "text-gray-700";
@@ -501,17 +464,17 @@ export default function Page() {
         toggleUserManagement={toggleUserManagement}
         toggleSettings={toggleSettings}
       />
-      <main className="">
+      <main className="flex-1">
         <div className="flex justify-end p-3 fixed top-0 right-0">
           <ModeToggle />
         </div>
-        <div className="">
+        <div className="pt-16">
           {showGauge && <Guage />}
           {showManagers && <Managers />}
           {showAttendance && <Attendence />}
           {showPerformance && <Performance />}
           {showBudgetsExpenses && <BudgetsExpenses />}
-          {showPayrollForecast && <AiSuggestion />} {}
+          {showPayrollForecast && <AiSuggestion />}
           {showApprovals && <Approvals />}
           {showMessaging && <Messaging />}
           {showAlerts && <Alerts />}

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CeoZodvalidation } from "@/Backend/Schema/Ceo.Schema";
-import { SaveCeoDeatils } from "@/Backend/tools/auth";
+import { saveCeoDetails } from "@/Backend/tools/auth";
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
@@ -48,7 +48,7 @@ const Dashboard = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const result = await SaveCeoDeatils(data);
+      const result = await saveCeoDetails(data);
       
       router.push("/ceo-dashboard");
     } catch (error) {
