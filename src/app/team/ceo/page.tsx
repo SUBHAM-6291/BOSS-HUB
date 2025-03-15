@@ -10,6 +10,7 @@ import { saveCeoDetails } from "@/Backend/tools/auth";
 const Dashboard = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const {
     register,
@@ -34,6 +35,7 @@ const Dashboard = () => {
       setValue("name", session.user.name || "");
       setValue("email", session.user.email || "");
       setValue("username", session.user.username || "");
+      setProfileImage(session.user.image || "/images/girl.jpg");
     }
   }, [session, status, router, setValue]);
 
@@ -49,7 +51,6 @@ const Dashboard = () => {
   const onSubmit = async (data: any) => {
     try {
       const result = await saveCeoDetails(data);
-      
       router.push("/ceo-dashboard");
     } catch (error) {
       console.error("Failed to save CEO details:", error);
@@ -57,15 +58,26 @@ const Dashboard = () => {
     }
   };
 
+  const handleImageError = () => {
+    setProfileImage("/images/girl.jpg");
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-center mb-6">
-          <img
-            src={session?.user?.image || "/images/girl.jpg"}
-            alt="Profile"
-            className="w-24 h-24 rounded-full border-4 border-blue-600"
-          />
+          {profileImage ? (
+            <img
+              src={profileImage}
+              alt="Profile"
+              className="w-24 h-24 rounded-full border-4 border-blue-600 object-cover"
+              onError={handleImageError}
+            />
+          ) : (
+            <div className="w-24 h-24 rounded-full border-4 border-blue-600 bg-gray-700 flex items-center justify-center">
+              <span className="text-gray-400">Loading...</span>
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>

@@ -8,58 +8,55 @@ export async function POST(req: NextRequest) {
         await connectToDatabase();
         
         const body = await req.json();
-        const { name, email, employeeUID, phoneNumber, department } = body;
-
-       
-        const validation = ManagerSchemaValidation.safeParse(body);
-        if (!validation.success) {
+        const { username, email, UserId } = body;
+        
+        if (!username || !email || !UserId) {
             return NextResponse.json(
-                { 
-                    status: 'error', 
-                    message: 'Invalid data format', 
-                    errors: validation.error.issues 
-                },
+                { status: "error", message: "Username, email, and UserId are required" },
                 { status: 400 }
             );
         }
 
-  
-        const newManager = new ManagersModel({
-            name,
-            email,
-            employeeUID,
-            phoneNumber,
-            department
+        const validation = ManagerSchemaValidation.safeParse(body);
+        if (!validation.success) {
+            return NextResponse.json(
+                { status: "error", message: "Invalid data", errors: validation.error.errors },
+                { status: 400 }
+            );
+        }
+
+        const existingManager = await ManagersModel.findOne({
+            $or: [{ email }, { username }, { UserId: UserId }]
         });
         
+        if (existingManager) {
+            return NextResponse.json(
+                { status: "error", message: "Manager username, email, or UserId already exists" },
+                { status: 409 }
+            );
+        }
+
+        const newManager = new ManagersModel(body);
         const savedManager = await newManager.save();
         
         return NextResponse.json(
             { 
-                status: 'success', 
-                message: 'Manager created successfully',
+                status: "success", 
+                message: "Manager registered successfully", 
                 data: savedManager 
             },
             { status: 201 }
         );
-        
     } catch (error: any) {
-        console.error('Error creating manager:', error);
-        if (error.code === 11000) {
+        if (error.code === 400) {
             return NextResponse.json(
-                { 
-                    status: 'error', 
-                    message: `Duplicate ${Object.keys(error.keyValue)[0]} detected` 
-                },
+                { status: "error", message: "Duplicate entry" },
                 { status: 409 }
             );
         }
         return NextResponse.json(
-            { 
-                status: 'error', 
-                message: error.message || 'Something went wrong' 
-            },
+            { status: "error", message: "Internal server error" },
             { status: 500 }
         );
     }
-}
+} 

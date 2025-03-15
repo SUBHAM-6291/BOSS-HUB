@@ -12,36 +12,48 @@ type FormData = z.infer<typeof signupSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [serverError, setServerError] = useState('');
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+  const { 
+    register, 
+    handleSubmit, 
+    setError,
+    formState: { errors, isSubmitting } 
+  } = useForm<FormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: { username: '', email: '', password: '' },
   });
 
   const onSubmit = async (data: FormData) => {
-    setServerError('');
     try {
       await registerUser(data);
       const signInResult = await signInWithCredentials(data.email, data.password);
+      
       if (signInResult?.ok) {
         router.push('/dashboard');
       } else {
-        setServerError('Failed to complete sign-up. Please try again.');
+        setError('root', { 
+          type: 'manual', 
+          message: 'Account created but login failed. Please try signing in.' 
+        });
       }
-    } catch (error) {
-      setServerError('Please ensure all fields are filled correctly and try again.');
+    } catch (error: any) {
+      setError('root', { 
+        type: 'manual', 
+        message: error.message || 'Something went wrong. Please try again.' 
+      });
     }
   };
 
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     setIsOAuthLoading(true);
-    setServerError('');
     try {
       await signInWithOAuth(provider);
       router.push('/dashboard');
-    } catch (error) {
-      setServerError('PLS WAIT WE WILL REDIRECT YOU');
+    } catch (error: any) {
+      setError('root', { 
+        type: 'manual', 
+        message: error.message || `Failed to sign up with ${provider}. Please try again.` 
+      });
     } finally {
       setIsOAuthLoading(false);
     }
@@ -51,6 +63,12 @@ export default function SignUpPage() {
     <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="w-full max-w-md p-8 rounded-lg bg-gray-900">
         <h1 className="text-3xl font-bold text-center mb-6 text-white">Sign Up</h1>
+        
+        {}
+        {errors.root && (
+          <p className="mb-4 text-center text-sm text-red-400">{errors.root.message}</p>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-white">Username</label>
@@ -101,9 +119,7 @@ export default function SignUpPage() {
             {isSubmitting ? 'Creating Your Account...' : 'Sign Up'}
           </button>
         </form>
-        {serverError && (
-          <p className="mt-4 text-center text-sm text-green-400">{serverError}</p>
-        )}
+
         <div className="mt-6 space-y-4">
           <button
             onClick={() => handleOAuthSignIn('google')}

@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newUser = new UserModel({ username, email, password }); 
+    const newUser = new UserModel({ username, email, password });
     await newUser.save();
 
     return NextResponse.json(
@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Registration error:', error);
     return NextResponse.json(
       { status: 'error', message: 'Internal server error' },
       { status: 500 }

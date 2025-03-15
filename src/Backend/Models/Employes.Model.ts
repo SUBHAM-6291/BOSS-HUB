@@ -1,38 +1,48 @@
 import mongoose, { Model, Schema } from "mongoose";
 
 interface Employee {
+  employeeId: string;
   fullName: string;
   email: string;
   employeeIdNumber: string;
-  jobPosition: string;
-  password: string;
   workingHours: number;
-  createdat: string,
-  ubdatedat: string
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const EmployeeSchema = new Schema<Employee>({
-  fullName: { type: String, required: true },
-  email: { type: String, required: [true, "Please enter your email"] },
-  employeeIdNumber: {
-    type: String,
-    required: [true, "Please enter your employee ID"],
+const EmployeeSchemaModel = new Schema<Employee>(
+  {
+    employeeId: { type: String, required: true, unique: true, trim: true },
+    fullName: { type: String, required: true, trim: true },
+    email: {
+      type: String,
+      required: [true, "Please enter your email"],
+      unique: true,
+      trim: true,
+    },
+    employeeIdNumber: {
+      type: String,
+      required: [true, "Please enter your employee ID"],
+      unique: true,
+      trim: true,
+    },
+    workingHours: {
+      type: Number,
+      required: [true, "Please enter your working hours"],
+      min: [1, "Working hours must be at least 1"],
+      max: [24, "Working hours cannot exceed 24"],
+    },
   },
-  jobPosition: {
-    type: String,
-    required: [true, "Please enter your job position"],
-  },
-  password: { type: String, required: [true, "Please enter your password"] },
-  workingHours: {
-    type: Number,
-    required: [true, "Please enter your working hours"],
-  },
-}, {
-  timestamps: true
-});
+  {
+    timestamps: true,
+  }
+);
 
-const Employee: Model<Employee> =
+type EmployeeModel = Model<Employee>;
+
+const Employee: EmployeeModel =
   mongoose.models.Employee ||
-  mongoose.model<Employee>("Employee", EmployeeSchema);
+  mongoose.model<Employee>("Employee", EmployeeSchemaModel);
 
+export { EmployeeSchemaModel, Employee };
 export default Employee;
