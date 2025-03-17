@@ -5,17 +5,16 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import Navbar from "@/app/Components/Navbar";
 
-
 export function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isCeoDashboard = pathname === "/ceo-dashboard";
+  const isDashboard = ["/ceo-dashboard", "/employee-dashboard", "/managers-dashboard"].includes(pathname);
 
   return (
     <SidebarProvider>
-      {isCeoDashboard && <AppSidebar />}
+      {isDashboard && <AppSidebar />}
       <main>
-        {!isCeoDashboard && <Navbar />}
-        {isCeoDashboard && <SidebarTrigger />}
+        {!isDashboard && <Navbar />}
+        {isDashboard && <SidebarTrigger />}
         {children}
       </main>
     </SidebarProvider>

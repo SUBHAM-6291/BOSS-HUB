@@ -15,7 +15,7 @@ import {
   Moon,
   Sun,
 } from "lucide-react";
-import { FaRobot, FaPaperPlane } from "react-icons/fa";
+import { FaRobot } from "react-icons/fa";
 import {
   Sidebar,
   SidebarContent,
@@ -48,43 +48,59 @@ import UserManagement from "@/app/Components/Ceo-/UserManagement";
 import SettingsComponent from "@/app/Components/Ceo-/SettingsComponent";
 import AiSuggestion from "../Components/Ceo-/AiSuggestion";
 
-const sidebarItems = [
+interface AppSidebarProps {
+  toggleGauge: () => void;
+  toggleManagers: () => void;
+  toggleAttendance: () => void;
+  togglePerformance: () => void;
+  toggleBudgetsExpenses: () => void;
+  togglePayrollForecast: () => void;
+  toggleApprovals: () => void;
+  toggleMessaging: () => void;
+  toggleAlerts: () => void;
+  toggleReports: () => void;
+  toggleCompanyOverview: () => void;
+  toggleUserManagement: () => void;
+  toggleSettings: () => void;
+}
+
+const sidebarItems = (props: AppSidebarProps) => [
   {
     category: "Management & Monitoring",
     items: [
-      { title: "Dashboard", url: "#", icon: Home },
-      { title: "Managers", url: "#", icon: Users },
-      { title: "Attendance", url: "#", icon: Calendar },
-      { title: "Performance", url: "#", icon: BarChart },
+      { title: "Dashboard", url: "#", icon: Home, onClick: props.toggleGauge },
+      { title: "Managers", url: "#", icon: Users, onClick: props.toggleManagers },
+      { title: "Attendance", url: "#", icon: Calendar, onClick: props.toggleAttendance },
+      { title: "Performance", url: "#", icon: BarChart, onClick: props.togglePerformance },
     ],
   },
   {
     category: "Financials & Approvals",
     items: [
-      { title: "Budgets & Expenses", url: "#", icon: DollarSign },
-      { title: "AI Insights", url: "#", icon: FaRobot },
-      { title: "Approvals", url: "#", icon: CheckCircle },
+      { title: "Budgets & Expenses", url: "#", icon: DollarSign, onClick: props.toggleBudgetsExpenses },
+      { title: "AI Insights", url: "#", icon: FaRobot, onClick: props.togglePayrollForecast },
+      { title: "Approvals", url: "#", icon: CheckCircle, onClick: props.toggleApprovals },
     ],
   },
   {
     category: "Communication & Alerts",
     items: [
-      { title: "Messaging", url: "#", icon: MessageCircle },
-      { title: "Alerts", url: "#", icon: Bell },
+      { title: "Messaging", url: "#", icon: MessageCircle, onClick: props.toggleMessaging },
+      { title: "Alerts", url: "#", icon: Bell, onClick: props.toggleAlerts },
     ],
   },
   {
     category: "Reports & Analytics",
     items: [
-      { title: "Reports", url: "#", icon: FileText },
-      { title: "Company Overview", url: "#", icon: BarChart },
+      { title: "Reports", url: "#", icon: FileText, onClick: props.toggleReports },
+      { title: "Company Overview", url: "#", icon: BarChart, onClick: props.toggleCompanyOverview },
     ],
   },
   {
     category: "Admin & Settings",
     items: [
-      { title: "User Management", url: "#", icon: Users },
-      { title: "Settings", url: "#", icon: Settings },
+      { title: "User Management", url: "#", icon: Users, onClick: props.toggleUserManagement },
+      { title: "Settings", url: "#", icon: Settings, onClick: props.toggleSettings },
     ],
   },
 ];
@@ -102,51 +118,15 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
+       
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
-interface AppSidebarProps {
-  toggleGauge: () => void;
-  toggleManagers: () => void;
-  toggleAttendance: () => void;
-  togglePerformance: () => void;
-  toggleBudgetsExpenses: () => void;
-  togglePayrollForecast: () => void;
-  toggleApprovals: () => void;
-  toggleMessaging: () => void;
-  toggleAlerts: () => void;
-  toggleReports: () => void;
-  toggleCompanyOverview: () => void;
-  toggleUserManagement: () => void;
-  toggleSettings: () => void;
-}
-
-export function AppSidebar({
-  toggleGauge,
-  toggleManagers,
-  toggleAttendance,
-  togglePerformance,
-  toggleBudgetsExpenses,
-  togglePayrollForecast,
-  toggleApprovals,
-  toggleMessaging,
-  toggleAlerts,
-  toggleReports,
-  toggleCompanyOverview,
-  toggleUserManagement,
-  toggleSettings,
-}: AppSidebarProps) {
+export function AppSidebar(props: AppSidebarProps) {
   const { theme } = useTheme();
 
   const textColor = theme === "dark" ? "text-white" : "text-gray-700";
@@ -155,15 +135,15 @@ export function AppSidebar({
   const bgColor = theme === "dark" ? "bg-gray-900" : "bg-gray-50";
   const hoverBgColor = theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-200";
 
+  const items = sidebarItems(props);
+
   return (
     <div>
       <Sidebar className={`w-64 h-screen ${bgColor} border-r`}>
         <SidebarContent className="p-4">
-          {sidebarItems.map((group) => (
+          {items.map((group) => (
             <SidebarGroup key={group.category}>
-              <SidebarGroupLabel
-                className={`text-lg font-semibold ${headingColor} mb-3`}
-              >
+              <SidebarGroupLabel className={`text-lg font-semibold ${headingColor} mb-3`}>
                 {group.category}
               </SidebarGroupLabel>
               <SidebarGroupContent>
@@ -173,41 +153,11 @@ export function AppSidebar({
                       <SidebarMenuButton
                         asChild
                         className={`w-full flex items-center p-2 rounded-lg ${textColor} ${hoverBgColor} transition-all`}
-                        onClick={
-                          item.title === "Dashboard"
-                            ? toggleGauge
-                            : item.title === "Managers"
-                            ? toggleManagers
-                            : item.title === "Attendance"
-                            ? toggleAttendance
-                            : item.title === "Performance"
-                            ? togglePerformance
-                            : item.title === "Budgets & Expenses"
-                            ? toggleBudgetsExpenses
-                            : item.title === "AI Insights"
-                            ? togglePayrollForecast
-                            : item.title === "Approvals"
-                            ? toggleApprovals
-                            : item.title === "Messaging"
-                            ? toggleMessaging
-                            : item.title === "Alerts"
-                            ? toggleAlerts
-                            : item.title === "Reports"
-                            ? toggleReports
-                            : item.title === "Company Overview"
-                            ? toggleCompanyOverview
-                            : item.title === "User Management"
-                            ? toggleUserManagement
-                            : item.title === "Settings"
-                            ? toggleSettings
-                            : undefined
-                        }
+                        onClick={item.onClick}
                       >
                         <a href={item.url} className="flex items-center space-x-3">
                           <item.icon className={`w-5 h-5 ${iconColor}`} />
-                          <span className={`font-medium ${textColor}`}>
-                            {item.title}
-                          </span>
+                          <span className={`font-medium ${textColor}`}>{item.title}</span>
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
