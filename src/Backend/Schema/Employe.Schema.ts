@@ -8,7 +8,7 @@ const EmployeeSchemaValidation = z.object({
     .min(3, { message: "Employee ID must be at least 3 characters" }),
   workingHours: z
     .number()
-    .min(0, { message: "Working hours must be at least 1" })
+    .min(1, { message: "Working hours must be at least 1" })
     .max(24, { message: "Working hours cannot exceed 24" }),
 });
 
