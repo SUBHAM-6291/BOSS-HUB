@@ -1,4 +1,3 @@
-// src/models/employee.ts
 import mongoose, { Model, Schema } from 'mongoose';
 
 interface Employee {
@@ -7,7 +6,7 @@ interface Employee {
   email: string;
   employeeIdNumber: string;
   workingHours: number;
-  profilePicture?: string; // Add profile picture field
+  profilePicture?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -36,7 +35,7 @@ const EmployeeSchemaModel = new Schema<Employee>(
     },
     profilePicture: {
       type: String,
-      default: null, // Optional: default to null if no picture is uploaded
+      default: null,
     },
   },
   {

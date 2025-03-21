@@ -1,7 +1,6 @@
 import { Schema, model, Document, models } from 'mongoose';
 
-
-export interface ManagerSchemaTypee extends Document {
+export interface ManagerSchemaType extends Document {
     name: string;
     email: string;
     employeeUID: string;
@@ -9,9 +8,13 @@ export interface ManagerSchemaTypee extends Document {
     department: string;
     createdAt: Date;
     updatedAt: Date;
+    profilePicture?: string;
 }
 
-const ManagersSchema: Schema<ManagerSchemaTypee> = new Schema(
+const DepartmentEnum = ['Manager', 'CTO', 'Senior Engineer (8-10 years)'] as const;
+type DepartmentType = typeof DepartmentEnum[number];
+
+const ManagersSchema: Schema<ManagerSchemaType> = new Schema(
     {
         name: { 
             type: String, 
@@ -35,13 +38,21 @@ const ManagersSchema: Schema<ManagerSchemaTypee> = new Schema(
         phoneNumber: { 
             type: Number, 
             required: [true, 'Phone number is required'],
-            min: [0, 'Phone number cannot be negative']
+            min: [0, 'Phone number cannot be negative'],
+            validate: {
+                validator: (v: number) => v.toString().length >= 7 && v.toString().length <= 15,
+                message: 'Phone number must be between 7 and 15 digits'
+            }
+        },
+        profilePicture: { 
+            type: String,
+            required: false
         },
         department: { 
             type: String, 
             required: [true, 'Department is required'],
             enum: {
-                values: ['Manager', 'CTO', 'Senior Engineer (8-10 years)'],
+                values: DepartmentEnum,
                 message: '{VALUE} is not a valid department'
             }
         },
@@ -51,4 +62,4 @@ const ManagersSchema: Schema<ManagerSchemaTypee> = new Schema(
     }
 );
 
-export const ManagersModel = (models.Manager || model<ManagerSchemaTypee>('Manager', ManagersSchema));
+export const ManagersModel = models.Manager || model<ManagerSchemaType>('Manager', ManagersSchema);

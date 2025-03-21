@@ -12,3 +12,11 @@ declare module 'next-auth' {
     username: string;
   }
 }
+
+
+ export interface FormData {
+  fullName: string;
+  email: string;
+  employeeIdNumber: string;
+  workingHours: number;
+}
