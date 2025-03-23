@@ -1,9 +1,5 @@
-import React from 'react'
+import VideoCall from "../Employess-/CEODirectLine";
 
-const Messaging = () => {
-  return (
-    <div>Messaging</div>
-  )
+export default function CEOPage() {
+  return <VideoCall role="CEO" />;
 }
-
-export default Messaging

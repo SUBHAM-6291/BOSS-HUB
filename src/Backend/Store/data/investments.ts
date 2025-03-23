@@ -714,3 +714,19 @@ export interface Investment {
       requirements: 'Task assignment, timeline views.',
     },
   ];
+
+
+  // data/investments.ts
+// data/investments.ts
+export type Investments = {
+  id: number;
+  name: string;
+  amount: number;
+  status: 'Pending' | 'Approved' | 'Rejected';
+};
+
+export const datass: Investments[] = [
+  { id: 1, name: 'Tech Startup', amount: 5000, status: 'Pending' },
+  { id: 2, name: 'Real Estate', amount: 10000, status: 'Pending' },
+  { id: 3, name: 'Green Energy', amount: 7500, status: 'Pending' },
+];

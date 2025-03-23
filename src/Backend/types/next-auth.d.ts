@@ -20,3 +20,13 @@ declare module 'next-auth' {
   employeeIdNumber: string;
   workingHours: number;
 }
+
+
+ export interface CompanyData {
+  bannerImage: string;
+  profileImage: string;
+  name: string;
+  role: string;
+  bio: string;
+  details: { founded: string; location: string; industry: string };
+}

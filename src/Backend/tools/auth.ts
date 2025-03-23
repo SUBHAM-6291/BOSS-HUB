@@ -60,28 +60,34 @@ export async function saveCeoDetails(data: CeoTypesafetyTools) {
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Failed to save CEO details");
   }
-
 }
 
-export async function saveManagersData(data: {
+interface ManagerTypesafetyTools {
   name: string;
   email: string;
   employeeUID: string;
-  phoneNumber: number;
   department: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}) {
+  profilePicture?: File;
+}
+
+export async function saveManagersData(data: ManagerTypesafetyTools) {
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("email", data.email);
+  formData.append("employeeUID", data.employeeUID);
+  formData.append("department", data.department);
+  if (data.profilePicture) formData.append("profilePicture", data.profilePicture);
+
   try {
-    const res = await fetch("/api/auth/Managers", {
+    const response = await fetch("/api/auth/Managers", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: formData,
     });
-    if (!res.ok) throw new Error((await res.json()).message);
-    return res;
+    if (!response.ok) throw new Error((await response.json()).message);
+    const result = await response.json();
+    return result;
   } catch (error) {
-    throw error;
+    throw new Error(error instanceof Error ? error.message : "Failed to save manager data");
   }
 }
 

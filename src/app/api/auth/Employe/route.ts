@@ -1,64 +1,51 @@
-// pages/api/auth/Employe.ts
-
+// src/app/api/auth/Managers/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/Backend/lib/Db.connect";
-import Employee from "@/Backend/Models/Employes.Model";
+import { ManagersModel } from "@/Backend/Models/Manager";
 import { handleImageUpload } from "@/Backend/Middleware/Cloudinary/cloud.middleware";
-import { EmployeeSchemaValidation } from "@/Backend/Schema/Employe.Schema";
-import { z } from "zod";
 
 export async function POST(req: NextRequest) {
   await connectToDatabase();
   const formData = await req.formData();
 
-  // Extract and validate data
   const rawData = {
-    fullName: formData.get("fullName")?.toString() || "Unknown User",
+    name: formData.get("name")?.toString() || "Unknown User",
     email: formData.get("email")?.toString() || `user-${Date.now()}@example.com`,
-    employeeIdNumber: formData.get("employeeIdNumber")?.toString() || `Employee-UID-${Date.now()}`,
-    workingHours: Number(formData.get("workingHours")) || 6,
+    employeeUID: formData.get("employeeUID")?.toString() || `EMP-${Date.now()}`,
+    department: formData.get("department")?.toString() || "Manager",
   };
 
   try {
-    const validatedData = EmployeeSchemaValidation.parse(rawData);
-    const employeeId = validatedData.employeeIdNumber;
-    const file = formData.get("profilePicture") as File | null;
-    const sessionImage = formData.get("sessionImage")?.toString() || null;
+    // Check for existing manager by email
+    const existingManager = await ManagersModel.findOne({ email: rawData.email });
 
-    // Check for existing employee
-    const existingEmployee = await Employee.findOne({
-      $or: [{ email: validatedData.email }, { employeeIdNumber: validatedData.employeeIdNumber }],
-    });
-
-    if (existingEmployee) {
+    if (existingManager) {
       return NextResponse.json(
-        { status: "success", message: "Welcome back!", data: existingEmployee },
+        { status: "success", message: "Welcome back!", data: existingManager },
         { status: 200 }
       );
     }
 
-    // Upload image and save new employee
-    const profilePictureUrl = await handleImageUpload(file, sessionImage, employeeId);
-    const newEmployee = new Employee({
-      employeeId,
-      ...validatedData,
+    // Handle image upload if provided
+    const file = formData.get("profilePicture") as File | null;
+    const sessionImage = formData.get("sessionImage")?.toString() || null;
+    const profilePictureUrl = await handleImageUpload(file, sessionImage, rawData.employeeUID);
+
+    // Create and save new manager
+    const newManager = new ManagersModel({
+      ...rawData,
       profilePicture: profilePictureUrl,
     });
-    await newEmployee.save();
+    await newManager.save();
 
     return NextResponse.json(
-      { status: "success", message: "Employee registered successfully!", data: newEmployee },
+      { status: "success", message: "New user created!", data: newManager },
       { status: 201 }
     );
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { status: "error", message: "Validation failed", errors: error.errors },
-        { status: 400 }
-      );
-    }
+    console.error("Error: ", error);
     return NextResponse.json(
-      { status: "error", message: "Internal server error" },
+      { status: "error", message: "Internal server error", error: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }

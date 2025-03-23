@@ -1,17 +1,17 @@
+// src/Backend/Models/Manager.ts
 import { Schema, model, Document, models } from 'mongoose';
 
 export interface ManagerSchemaType extends Document {
     name: string;
     email: string;
     employeeUID: string;
-    phoneNumber: number;
     department: string;
     createdAt: Date;
     updatedAt: Date;
     profilePicture?: string;
 }
 
-const DepartmentEnum = ['Manager', 'CTO', 'Senior Engineer (8-10 years)'] as const;
+const DepartmentEnum = ['Manager', 'CTO', 'Senior Engineer (8-10 years)', 'Engineering Manager'] as const;
 type DepartmentType = typeof DepartmentEnum[number];
 
 const ManagersSchema: Schema<ManagerSchemaType> = new Schema(
@@ -35,19 +35,6 @@ const ManagersSchema: Schema<ManagerSchemaType> = new Schema(
             unique: true,
             trim: true 
         },
-        phoneNumber: { 
-            type: Number, 
-            required: [true, 'Phone number is required'],
-            min: [0, 'Phone number cannot be negative'],
-            validate: {
-                validator: (v: number) => v.toString().length >= 7 && v.toString().length <= 15,
-                message: 'Phone number must be between 7 and 15 digits'
-            }
-        },
-        profilePicture: { 
-            type: String,
-            required: false
-        },
         department: { 
             type: String, 
             required: [true, 'Department is required'],
@@ -55,6 +42,10 @@ const ManagersSchema: Schema<ManagerSchemaType> = new Schema(
                 values: DepartmentEnum,
                 message: '{VALUE} is not a valid department'
             }
+        },
+        profilePicture: { 
+            type: String,
+            required: false
         },
     },
     {
