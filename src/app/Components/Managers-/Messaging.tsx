@@ -1,5 +1,5 @@
-import VideoCall from "../Employess-/CEODirectLine"; // Adjust path
+import VideoCall from "@/Backend/server/frontend/frontend"; // Adjust path
 
-export default function EmployeePage() {
-  return <VideoCall role="Employee" />;
+export default function ManagerPage() {
+  return <VideoCall role="Manager" />;
 }
