@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Messaging = () => {
+const subscription = () => {
   return (
     <div>
-      
+    
     </div>
   )
 }
 
-export default Messaging
+export default subscription

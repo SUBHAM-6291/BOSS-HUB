@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ESNext", // Updated to latest JS features
+    "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "ESNext", // Matches "type": "module" in package.json
-    "moduleResolution": "Node", // Changed to "Node" for ts-node compatibility
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",

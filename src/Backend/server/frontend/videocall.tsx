@@ -1,4 +1,3 @@
-// Backend/server/frontend/videocall.tsx
 "use client";
 
 import { useRef } from "react";

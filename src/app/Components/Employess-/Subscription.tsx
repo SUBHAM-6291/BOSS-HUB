@@ -1,11 +1,11 @@
 import React from 'react'
 
-const SettingsComponent = () => {
+const Subscription = () => {
   return (
     <div className=' text-white font-bold text-4xl'>
-      comming soon ...
+       comming soon 
     </div>
   )
 }
 
-export default SettingsComponent
+export default Subscription

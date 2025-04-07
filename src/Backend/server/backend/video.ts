@@ -1,10 +1,12 @@
-// Backend/server/backend/video.ts
 import { useEffect, useRef, useState } from "react";
 import Peer, { MediaConnection } from "peerjs";
 
 interface VideoCallLogicProps {
   role: "CEO" | "Manager" | "Employee";
-  videoRefs: Record<"CEO" | "Manager" | "Employee", React.RefObject<HTMLVideoElement | null>>;
+  videoRefs: Record<
+    "CEO" | "Manager" | "Employee",
+    React.RefObject<HTMLVideoElement | null>
+  >;
 }
 
 export const useVideoCallLogic = ({ role, videoRefs }: VideoCallLogicProps) => {
@@ -14,7 +16,11 @@ export const useVideoCallLogic = ({ role, videoRefs }: VideoCallLogicProps) => {
   const callsRef = useRef<Map<string, MediaConnection>>(new Map());
 
   useEffect(() => {
-    const peerInstance = new Peer(role, { host: "0.peerjs.com", port: 443, secure: true });
+    const peerInstance = new Peer(role, {
+      host: "0.peerjs.com",
+      port: 443,
+      secure: true,
+    });
     peerInstance.on("open", () => setPeer(peerInstance));
     peerInstance.on("call", (call) => {
       if (streamRef.current) {
@@ -29,7 +35,10 @@ export const useVideoCallLogic = ({ role, videoRefs }: VideoCallLogicProps) => {
   }, [role]);
 
   const startVideo = async () => {
-    streamRef.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    streamRef.current = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
     const localVideo = videoRefs[role].current;
     if (localVideo) localVideo.srcObject = streamRef.current;
   };
@@ -58,7 +67,9 @@ export const useVideoCallLogic = ({ role, videoRefs }: VideoCallLogicProps) => {
     callsRef.current.forEach((call) => call.close());
     callsRef.current.clear();
     streamRef.current?.getTracks().forEach((track) => track.stop());
-    Object.values(videoRefs).forEach((ref) => ref.current && (ref.current.srcObject = null));
+    Object.values(videoRefs).forEach(
+      (ref) => ref.current && (ref.current.srcObject = null)
+    );
     setInCall(false);
   };
 

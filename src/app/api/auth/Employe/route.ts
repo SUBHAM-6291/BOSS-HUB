@@ -1,4 +1,3 @@
-// src/app/api/auth/Managers/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/Backend/lib/Db.connect";
 import { ManagersModel } from "@/Backend/Models/Manager";
@@ -16,7 +15,6 @@ export async function POST(req: NextRequest) {
   };
 
   try {
-    // Check for existing manager by email
     const existingManager = await ManagersModel.findOne({ email: rawData.email });
 
     if (existingManager) {
@@ -26,12 +24,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Handle image upload if provided
     const file = formData.get("profilePicture") as File | null;
     const sessionImage = formData.get("sessionImage")?.toString() || null;
     const profilePictureUrl = await handleImageUpload(file, sessionImage, rawData.employeeUID);
 
-    // Create and save new manager
     const newManager = new ManagersModel({
       ...rawData,
       profilePicture: profilePictureUrl,
