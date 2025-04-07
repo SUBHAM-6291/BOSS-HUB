@@ -1,23 +1,13 @@
+// src/Backend/Schema/Manager.Schema.ts
 import { z } from "zod";
 
-interface Response {
-    name: string;
-    email: string;
-    employeeUID: string;
-    phoneNumber: number;
-    department: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
-
 export const ManagerSchemaValidation = z.object({
-    name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
-    email: z.string().email({ message: "Invalid email address" }),
-    employeeUID: z.string().length(13, { message: "Employee UID must be exactly 6 characters long" }),
-    phoneNumber: z.number().min(1000000000, { message: "Phone number must be at least 10 digits" }).max(9999999999, { message: "Phone number must not exceed 10 digits" }),
-    department: z.string().min(2, { message: "Department must be at least 2 characters long" }),
-    createdAt: z.date().optional(),
-    updatedAt: z.date().optional(),
+    name: z.string().min(1, "Name is required").trim(),
+    email: z.string().email("Invalid email address").min(1, "Email is required"),
+    employeeUID: z.string().min(1, "Employee UID is required"),
+    department: z.enum(['Manager', 'CTO', 'Senior Engineer (8-10 years)', 'Engineering Manager'], {
+        errorMap: () => ({ message: "Invalid department" }),
+    }),
+    profilePicture: z.any().optional(),
 });
-
 export type ManagerSchemaType = z.infer<typeof ManagerSchemaValidation>;

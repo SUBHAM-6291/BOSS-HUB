@@ -1,108 +1,93 @@
-
-import { signIn } from 'next-auth/react';
-
+import { signIn } from "next-auth/react";
 
 export async function signInWithCredentials(email: string, password: string) {
   try {
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
-    
-    if (result?.error) {
-      throw new Error(result.error);
-    }
+    const result = await signIn("credentials", { redirect: false, email, password });
+    if (result?.error) throw new Error(result.error);
     return result;
   } catch (error) {
     throw error;
   }
 }
 
-export async function signInWithOAuth(provider: 'google' | 'github') {
+export async function signInWithOAuth(provider: "google" | "github") {
   try {
     const result = await signIn(provider, { redirect: false });
-    
-    if (!result?.ok) {
-      throw new Error(`Failed to sign in with ${provider}`);
-    }
+    if (!result?.ok) throw new Error(`Failed to sign in with ${provider}`);
     return result;
   } catch (error) {
     throw error;
   }
 }
 
-export async function registerUser(data: { 
-  username: string; 
-  email: string; 
-  password: string 
-}) {
+export async function registerUser(data: { username: string; email: string; password: string }) {
   try {
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-
-    if (!res.ok) {
-      const { message } = await res.json();
-      throw new Error(message);
-    }
-    
+    if (!res.ok) throw new Error((await res.json()).message);
     return res;
   } catch (error) {
     throw error;
   }
 }
 
-export async function saveCeoDetails(data: {
-  username: string;
+interface CeoTypesafetyTools {
+  fullName: string;
   email: string;
-  name: string;
-  UserId: string;
-}) {
-  try {
-    const ceoResponse = await fetch('/api/auth/ceo', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+  ceoIdNumber: string;
+  profilePicture?: File;
+  sessionImage?: string;
+}
 
-    if (!ceoResponse.ok) {
-      const { message } = await ceoResponse.json();
-      throw new Error(message);
-    }
-    
-    return ceoResponse;
+export async function saveCeoDetails(data: CeoTypesafetyTools) {
+  const formData = new FormData();
+  formData.append("fullName", data.fullName);
+  formData.append("email", data.email);
+  formData.append("ceoIdNumber", data.ceoIdNumber);
+  if (data.profilePicture) formData.append("profilePicture", data.profilePicture);
+  if (data.sessionImage) formData.append("sessionImage", data.sessionImage);
+
+  try {
+    const response = await fetch("/api/auth/ceo", {
+      method: "POST",
+      body: formData,
+    });
+    if (!response.ok) throw new Error((await response.json()).message);
+    return await response.json();
   } catch (error) {
-    throw error;
+    throw new Error(error instanceof Error ? error.message : "Failed to save CEO details");
   }
 }
 
-export async function saveManagersData(data: {
+interface ManagerTypesafetyTools {
   name: string;
   email: string;
   employeeUID: string;
-  phoneNumber: number;
   department: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}) {
-  try {
-    const response = await fetch('/api/auth/Managers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+  profilePicture?: File;
+}
 
-    if (!response.ok) {
-      const { message } = await response.json();
-      throw new Error(message);
-    }
-    
-    return response;
+export async function saveManagersData(data: ManagerTypesafetyTools) {
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("email", data.email);
+  formData.append("employeeUID", data.employeeUID);
+  formData.append("department", data.department);
+  if (data.profilePicture) formData.append("profilePicture", data.profilePicture);
+
+  try {
+    const response = await fetch("/api/auth/Managers", {
+      method: "POST",
+      body: formData,
+    });
+    if (!response.ok) throw new Error((await response.json()).message);
+    const result = await response.json();
+    return result;
   } catch (error) {
-    throw error;
+    throw new Error(error instanceof Error ? error.message : "Failed to save manager data");
   }
 }
 
@@ -110,27 +95,28 @@ interface EmployeeTypesafetyTools {
   fullName: string;
   email: string;
   employeeIdNumber: string;
- 
   workingHours: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  profilePicture?: File;
+  sessionImage?: string;
 }
 
 export async function saveEmployeeData(data: EmployeeTypesafetyTools) {
-  try {
-    const response = await fetch('/api/auth/Employe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+  const formData = new FormData();
+  formData.append("employeeId", data.employeeIdNumber);
+  formData.append("fullName", data.fullName);
+  formData.append("email", data.email);
+  formData.append("workingHours", data.workingHours.toString());
+  if (data.sessionImage) formData.append("sessionImage", data.sessionImage);
+  if (data.profilePicture) formData.append("profilePicture", data.profilePicture);
 
-    if (!response.ok) {
-      const { message } = await response.json();
-      throw new Error(message);
-    }
-    
-    return response;
+  try {
+    const response = await fetch("/api/auth/Employe", {
+      method: "POST",
+      body: formData,
+    });
+    if (!response.ok) throw new Error((await response.json()).message);
+    return await response.json();
   } catch (error) {
-    throw error;
+    throw new Error(error instanceof Error ? error.message : "Failed to save employee data");
   }
 }

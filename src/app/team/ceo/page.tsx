@@ -1,29 +1,38 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CeoZodvalidation } from "@/Backend/Schema/Ceo.Schema";
 import { saveCeoDetails } from "@/Backend/tools/auth";
+import { FaPlus } from "react-icons/fa";
+
+interface FormData {
+  fullName: string;
+  email: string;
+  ceoIdNumber: string;
+}
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     resolver: zodResolver(CeoZodvalidation),
     defaultValues: {
-      name: "",
+      fullName: "",
       email: "",
-      username: "",
-      UserId: "",
+      ceoIdNumber: "",
     },
   });
 
@@ -32,70 +41,103 @@ const Dashboard = () => {
     if (!session) {
       router.push("/");
     } else {
-      setValue("name", session.user.name || "");
-      setValue("email", session.user.email || "");
-      setValue("username", session.user.username || "");
-      setProfileImage(session.user.image || "/images/girl.jpg");
+      setValue("fullName", session.user?.name || "");
+      setValue("email", session.user?.email || "");
+      setValue("ceoIdNumber", generateCeoId());
+      setProfileImage(session.user?.image || "/images/default-ceo.jpg");
     }
   }, [session, status, router, setValue]);
 
-  const generateUserId = () => {
+  const generateCeoId = () => {
     const randomId = Math.floor(Math.random() * 10000000000) + 1000;
-    setValue("UserId", `UID-${randomId}`);
+    return `CEO-UID-${randomId}`;
   };
 
-  useEffect(() => {
-    generateUserId();
-  }, []);
-
-  const onSubmit = async (data: any) => {
-    try {
-      const result = await saveCeoDetails(data);
-      router.push("/ceo-dashboard");
-    } catch (error) {
-      console.error("Failed to save CEO details:", error);
-      router.push("/ceo-dashboard");
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImage(URL.createObjectURL(file));
+      setSelectedFile(file);
     }
   };
 
-  const handleImageError = () => {
-    setProfileImage("/images/girl.jpg");
+  const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
+    setMessage(null);
+    try {
+      console.log("Submitting CEO data:", {
+        fullName: data.fullName,
+        email: data.email,
+        ceoIdNumber: data.ceoIdNumber,
+        profilePicture: selectedFile ? selectedFile.name : "No file",
+        sessionImage: session?.user?.image || "No session image",
+      });
+      const result = await saveCeoDetails({
+        ...data,
+        profilePicture: selectedFile,
+        sessionImage: session?.user?.image,
+      });
+      console.log("API response:", result);
+      setMessage(result.message); // "Welcome back!" or "CEO registered successfully!"
+      setTimeout(() => router.push("/ceo-dashboard"), 1500);
+    } catch (error) {
+      console.error("Unexpected error submitting CEO data:", error);
+      setMessage("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
-        <div className="flex justify-center mb-6">
-          {profileImage ? (
-            <img
-              src={profileImage}
-              alt="Profile"
-              className="w-24 h-24 rounded-full border-4 border-blue-600 object-cover"
-              onError={handleImageError}
+        <div className="relative flex justify-center mb-6">
+          <img
+            src={profileImage || "/images/default-ceo.jpg"}
+            alt="CEO Profile"
+            className="w-24 h-24 rounded-full border-4 border-blue-600 object-cover"
+          />
+          <label
+            htmlFor="profilePicture"
+            className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700"
+          >
+            <FaPlus className="text-white" />
+            <input
+              type="file"
+              id="profilePicture"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageChange}
             />
-          ) : (
-            <div className="w-24 h-24 rounded-full border-4 border-blue-600 bg-gray-700 flex items-center justify-center">
-              <span className="text-gray-400">Loading...</span>
-            </div>
-          )}
+          </label>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
-            <label className="text-white font-semibold" htmlFor="name">
-              Name
+        {message && (
+          <div
+            className={`mb-4 p-2 rounded text-center text-white ${
+              message.includes("error") ? "bg-red-600" : "bg-green-600"
+            }`}
+          >
+            {message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="text-white font-semibold" htmlFor="fullName">
+              Full Name
             </label>
             <input
-              {...register("name")}
-              id="name"
+              {...register("fullName")}
+              id="fullName"
               className="w-full mt-1 p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
+            {errors.fullName && (
+              <p className="mt-1 text-sm text-red-400">{errors.fullName.message}</p>
             )}
           </div>
 
-          <div className="mb-4">
+          <div>
             <label className="text-white font-semibold" htmlFor="email">
               Email
             </label>
@@ -105,56 +147,32 @@ const Dashboard = () => {
               type="email"
               className="w-full mt-1 p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>}
           </div>
 
-          <div className="mb-4">
-            <label className="text-white font-semibold" htmlFor="username">
-              Username
+          <div>
+            <label className="text-white font-semibold" htmlFor="ceoIdNumber">
+              CEO ID
             </label>
             <input
-              {...register("username")}
-              id="username"
+              {...register("ceoIdNumber")}
+              id="ceoIdNumber"
               className="w-full mt-1 p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled
             />
-            {errors.username && (
-              <p className="mt-1 text-sm text-red-400">
-                {errors.username.message}
-              </p>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label className="text-white font-semibold" htmlFor="userId">
-              User ID
-            </label>
-            <div className="flex gap-2">
-              <input
-                {...register("UserId")}
-                id="userId"
-                className="flex-1 mt-1 p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                disabled
-              />
-              <button
-                type="button"
-                onClick={generateUserId}
-                className="mt-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-              >
-                Generate
-              </button>
-            </div>
-            {errors.UserId && (
-              <p className="mt-1 text-sm text-red-400">{errors.UserId.message}</p>
+            {errors.ceoIdNumber && (
+              <p className="mt-1 text-sm text-red-400">{errors.ceoIdNumber.message}</p>
             )}
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            disabled={isSubmitting}
+            className={`w-full py-2 text-white rounded ${
+              isSubmitting ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Save
+            {isSubmitting ? "Processing..." : "Save"}
           </button>
         </form>
       </div>

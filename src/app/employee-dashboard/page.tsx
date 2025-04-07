@@ -7,12 +7,13 @@ import {
   DollarSign,
   MessageCircle,
   Bell,
-  Phone,
+  Video,
   FileText,
   CheckSquare,
   Settings,
   Moon,
   Sun,
+  CreditCard,
 } from "lucide-react";
 import {
   Sidebar,
@@ -36,12 +37,13 @@ import Dashboard from "@/app/Components/Employess-/Dashboard";
 import OvertimeRequests from "@/app/Components/Employess-/OvertimeRequests";
 import SalaryCheck from "@/app/Components/Employess-/SalaryCheck";
 import BudgetRequests from "@/app/Components/Employess-/BudgetRequests";
-import Messaging from "@/app/Components/Employess-/Messaging"
+import Messaging from "@/app/Components/Employess-/Messaging";
 import Alerts from "@/app/Components/Employess-/Alerts";
-import CEODirectLine from "@/app/Components/Employess-/CEODirectLine";
+import VideoComponent from "@/app/Components/Employess-/VideoComponent";
 import PerformanceReports from "@/app/Components/Employess-/PerformanceReports";
 import TaskAssignments from "@/app/Components/Employess-/TaskAssignments";
 import SettingsComponent from "@/app/Components/Employess-/SettingsComponent";
+import Subscription from "@/app/Components/Employess-/Subscription";
 
 interface AppSidebarProps {
   toggleDashboard: () => void;
@@ -50,10 +52,11 @@ interface AppSidebarProps {
   toggleBudgetRequests: () => void;
   toggleMessaging: () => void;
   toggleAlerts: () => void;
-  toggleCEODirectLine: () => void;
+  toggleVideo: () => void;
   togglePerformanceReports: () => void;
   toggleTaskAssignments: () => void;
   toggleSettings: () => void;
+  toggleSubscription: () => void;
 }
 
 const sidebarItems = (props: AppSidebarProps) => [
@@ -76,7 +79,7 @@ const sidebarItems = (props: AppSidebarProps) => [
     items: [
       { title: "Messages", url: "#", icon: MessageCircle, onClick: props.toggleMessaging },
       { title: "Alerts", url: "#", icon: Bell, onClick: props.toggleAlerts },
-      { title: "CEO Direct Line", url: "#", icon: Phone, onClick: props.toggleCEODirectLine },
+      { title: "Video", url: "#", icon: Video, onClick: props.toggleVideo },
     ],
   },
   {
@@ -95,6 +98,12 @@ const sidebarItems = (props: AppSidebarProps) => [
     category: "My Options",
     items: [
       { title: "Settings", url: "#", icon: Settings, onClick: props.toggleSettings },
+    ],
+  },
+  {
+    category: "Plan Management",
+    items: [
+      { title: "Subscription", url: "#", icon: CreditCard, onClick: props.toggleSubscription },
     ],
   },
 ];
@@ -174,10 +183,11 @@ export default function Page() {
   const [showBudgetRequests, setShowBudgetRequests] = useState(false);
   const [showMessaging, setShowMessaging] = useState(false);
   const [showAlerts, setShowAlerts] = useState(false);
-  const [showCEODirectLine, setShowCEODirectLine] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const [showPerformanceReports, setShowPerformanceReports] = useState(false);
   const [showTaskAssignments, setShowTaskAssignments] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showSubscription, setShowSubscription] = useState(false);
 
   const toggleDashboard = () => {
     setShowDashboard(!showDashboard);
@@ -186,10 +196,11 @@ export default function Page() {
     setShowBudgetRequests(false);
     setShowMessaging(false);
     setShowAlerts(false);
-    setShowCEODirectLine(false);
+    setShowVideo(false);
     setShowPerformanceReports(false);
     setShowTaskAssignments(false);
     setShowSettings(false);
+    setShowSubscription(false);
   };
 
   const toggleOvertimeRequests = () => {
@@ -199,10 +210,11 @@ export default function Page() {
     setShowBudgetRequests(false);
     setShowMessaging(false);
     setShowAlerts(false);
-    setShowCEODirectLine(false);
+    setShowVideo(false);
     setShowPerformanceReports(false);
     setShowTaskAssignments(false);
     setShowSettings(false);
+    setShowSubscription(false);
   };
 
   const toggleSalaryCheck = () => {
@@ -212,10 +224,11 @@ export default function Page() {
     setShowBudgetRequests(false);
     setShowMessaging(false);
     setShowAlerts(false);
-    setShowCEODirectLine(false);
+    setShowVideo(false);
     setShowPerformanceReports(false);
     setShowTaskAssignments(false);
     setShowSettings(false);
+    setShowSubscription(false);
   };
 
   const toggleBudgetRequests = () => {
@@ -225,10 +238,11 @@ export default function Page() {
     setShowSalaryCheck(false);
     setShowMessaging(false);
     setShowAlerts(false);
-    setShowCEODirectLine(false);
+    setShowVideo(false);
     setShowPerformanceReports(false);
     setShowTaskAssignments(false);
     setShowSettings(false);
+    setShowSubscription(false);
   };
 
   const toggleMessaging = () => {
@@ -238,10 +252,11 @@ export default function Page() {
     setShowSalaryCheck(false);
     setShowBudgetRequests(false);
     setShowAlerts(false);
-    setShowCEODirectLine(false);
+    setShowVideo(false);
     setShowPerformanceReports(false);
     setShowTaskAssignments(false);
     setShowSettings(false);
+    setShowSubscription(false);
   };
 
   const toggleAlerts = () => {
@@ -251,14 +266,15 @@ export default function Page() {
     setShowSalaryCheck(false);
     setShowBudgetRequests(false);
     setShowMessaging(false);
-    setShowCEODirectLine(false);
+    setShowVideo(false);
     setShowPerformanceReports(false);
     setShowTaskAssignments(false);
     setShowSettings(false);
+    setShowSubscription(false);
   };
 
-  const toggleCEODirectLine = () => {
-    setShowCEODirectLine(!showCEODirectLine);
+  const toggleVideo = () => {
+    setShowVideo(!showVideo);
     setShowDashboard(false);
     setShowOvertimeRequests(false);
     setShowSalaryCheck(false);
@@ -268,6 +284,7 @@ export default function Page() {
     setShowPerformanceReports(false);
     setShowTaskAssignments(false);
     setShowSettings(false);
+    setShowSubscription(false);
   };
 
   const togglePerformanceReports = () => {
@@ -278,9 +295,10 @@ export default function Page() {
     setShowBudgetRequests(false);
     setShowMessaging(false);
     setShowAlerts(false);
-    setShowCEODirectLine(false);
+    setShowVideo(false);
     setShowTaskAssignments(false);
     setShowSettings(false);
+    setShowSubscription(false);
   };
 
   const toggleTaskAssignments = () => {
@@ -291,9 +309,10 @@ export default function Page() {
     setShowBudgetRequests(false);
     setShowMessaging(false);
     setShowAlerts(false);
-    setShowCEODirectLine(false);
+    setShowVideo(false);
     setShowPerformanceReports(false);
     setShowSettings(false);
+    setShowSubscription(false);
   };
 
   const toggleSettings = () => {
@@ -304,9 +323,24 @@ export default function Page() {
     setShowBudgetRequests(false);
     setShowMessaging(false);
     setShowAlerts(false);
-    setShowCEODirectLine(false);
+    setShowVideo(false);
     setShowPerformanceReports(false);
     setShowTaskAssignments(false);
+    setShowSubscription(false);
+  };
+
+  const toggleSubscription = () => {
+    setShowSubscription(!showSubscription);
+    setShowDashboard(false);
+    setShowOvertimeRequests(false);
+    setShowSalaryCheck(false);
+    setShowBudgetRequests(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowVideo(false);
+    setShowPerformanceReports(false);
+    setShowTaskAssignments(false);
+    setShowSettings(false);
   };
 
   return (
@@ -318,10 +352,11 @@ export default function Page() {
         toggleBudgetRequests={toggleBudgetRequests}
         toggleMessaging={toggleMessaging}
         toggleAlerts={toggleAlerts}
-        toggleCEODirectLine={toggleCEODirectLine}
+        toggleVideo={toggleVideo}
         togglePerformanceReports={togglePerformanceReports}
         toggleTaskAssignments={toggleTaskAssignments}
         toggleSettings={toggleSettings}
+        toggleSubscription={toggleSubscription}
       />
       <main className="flex-1">
         <div className="flex justify-end p-3 fixed top-0 right-0">
@@ -334,10 +369,11 @@ export default function Page() {
           {showBudgetRequests && <BudgetRequests />}
           {showMessaging && <Messaging />}
           {showAlerts && <Alerts />}
-          {showCEODirectLine && <CEODirectLine />}
+          {showVideo && <VideoComponent />}
           {showPerformanceReports && <PerformanceReports />}
           {showTaskAssignments && <TaskAssignments />}
           {showSettings && <SettingsComponent />}
+          {showSubscription && <Subscription />}
         </div>
       </main>
     </div>

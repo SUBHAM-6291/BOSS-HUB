@@ -14,6 +14,8 @@ import {
   Settings,
   Moon,
   Sun,
+  Video,
+  CreditCard,
 } from "lucide-react";
 import { FaRobot } from "react-icons/fa";
 import {
@@ -47,6 +49,8 @@ import CompanyOverview from "@/app/Components/Ceo-/CompanyOverview";
 import UserManagement from "@/app/Components/Ceo-/UserManagement";
 import SettingsComponent from "@/app/Components/Ceo-/SettingsComponent";
 import AiSuggestion from "../Components/Ceo-/AiSuggestion";
+import VideoComponent from "@/app/Components/Ceo-/video";
+import Subscription from "@/app/Components/Ceo-/subscription";
 
 interface AppSidebarProps {
   toggleGauge: () => void;
@@ -62,6 +66,8 @@ interface AppSidebarProps {
   toggleCompanyOverview: () => void;
   toggleUserManagement: () => void;
   toggleSettings: () => void;
+  toggleVideo: () => void;
+  toggleSubscription: () => void;
 }
 
 const sidebarItems = (props: AppSidebarProps) => [
@@ -87,6 +93,7 @@ const sidebarItems = (props: AppSidebarProps) => [
     items: [
       { title: "Messaging", url: "#", icon: MessageCircle, onClick: props.toggleMessaging },
       { title: "Alerts", url: "#", icon: Bell, onClick: props.toggleAlerts },
+      { title: "Video", url: "#", icon: Video, onClick: props.toggleVideo },
     ],
   },
   {
@@ -101,6 +108,7 @@ const sidebarItems = (props: AppSidebarProps) => [
     items: [
       { title: "User Management", url: "#", icon: Users, onClick: props.toggleUserManagement },
       { title: "Settings", url: "#", icon: Settings, onClick: props.toggleSettings },
+      { title: "Subscription", url: "#", icon: CreditCard, onClick: props.toggleSubscription },
     ],
   },
 ];
@@ -120,7 +128,6 @@ export function ModeToggle() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-       
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -188,6 +195,8 @@ export default function Page() {
   const [showCompanyOverview, setShowCompanyOverview] = useState(false);
   const [showUserManagement, setShowUserManagement] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const [showSubscription, setShowSubscription] = useState(false);
 
   const toggleGauge = () => {
     setShowGauge(!showGauge);
@@ -203,6 +212,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleManagers = () => {
@@ -219,6 +230,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleAttendance = () => {
@@ -235,6 +248,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const togglePerformance = () => {
@@ -251,6 +266,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleBudgetsExpenses = () => {
@@ -267,6 +284,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const togglePayrollForecast = () => {
@@ -283,6 +302,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleApprovals = () => {
@@ -299,6 +320,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleMessaging = () => {
@@ -315,6 +338,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleAlerts = () => {
@@ -331,6 +356,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleReports = () => {
@@ -347,6 +374,8 @@ export default function Page() {
     setShowCompanyOverview(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleCompanyOverview = () => {
@@ -363,6 +392,8 @@ export default function Page() {
     setShowReports(false);
     setShowUserManagement(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleUserManagement = () => {
@@ -379,6 +410,8 @@ export default function Page() {
     setShowReports(false);
     setShowCompanyOverview(false);
     setShowSettings(false);
+    setShowVideo(false);
+    setShowSubscription(false);
   };
 
   const toggleSettings = () => {
@@ -395,6 +428,44 @@ export default function Page() {
     setShowReports(false);
     setShowCompanyOverview(false);
     setShowUserManagement(false);
+    setShowVideo(false);
+    setShowSubscription(false);
+  };
+
+  const toggleVideo = () => {
+    setShowVideo(!showVideo);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+    setShowSubscription(false);
+  };
+
+  const toggleSubscription = () => {
+    setShowSubscription(!showSubscription);
+    setShowGauge(false);
+    setShowManagers(false);
+    setShowAttendance(false);
+    setShowPerformance(false);
+    setShowBudgetsExpenses(false);
+    setShowPayrollForecast(false);
+    setShowApprovals(false);
+    setShowMessaging(false);
+    setShowAlerts(false);
+    setShowReports(false);
+    setShowCompanyOverview(false);
+    setShowUserManagement(false);
+    setShowSettings(false);
+    setShowVideo(false);
   };
 
   return (
@@ -413,6 +484,8 @@ export default function Page() {
         toggleCompanyOverview={toggleCompanyOverview}
         toggleUserManagement={toggleUserManagement}
         toggleSettings={toggleSettings}
+        toggleVideo={toggleVideo}
+        toggleSubscription={toggleSubscription}
       />
       <main className="flex-1">
         <div className="flex justify-end p-3 fixed top-0 right-0">
@@ -432,6 +505,8 @@ export default function Page() {
           {showCompanyOverview && <CompanyOverview />}
           {showUserManagement && <UserManagement />}
           {showSettings && <SettingsComponent />}
+          {showVideo && <VideoComponent />}
+          {showSubscription && <Subscription />}
         </div>
       </main>
     </div>

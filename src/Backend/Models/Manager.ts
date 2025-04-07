@@ -1,17 +1,20 @@
+// src/Backend/Models/Manager.ts
 import { Schema, model, Document, models } from 'mongoose';
 
-
-export interface ManagerSchemaTypee extends Document {
+export interface ManagerSchemaType extends Document {
     name: string;
     email: string;
     employeeUID: string;
-    phoneNumber: number;
     department: string;
     createdAt: Date;
     updatedAt: Date;
+    profilePicture?: string;
 }
 
-const ManagersSchema: Schema<ManagerSchemaTypee> = new Schema(
+const DepartmentEnum = ['Manager', 'CTO', 'Senior Engineer (8-10 years)', 'Engineering Manager'] as const;
+type DepartmentType = typeof DepartmentEnum[number];
+
+const ManagersSchema: Schema<ManagerSchemaType> = new Schema(
     {
         name: { 
             type: String, 
@@ -32,18 +35,17 @@ const ManagersSchema: Schema<ManagerSchemaTypee> = new Schema(
             unique: true,
             trim: true 
         },
-        phoneNumber: { 
-            type: Number, 
-            required: [true, 'Phone number is required'],
-            min: [0, 'Phone number cannot be negative']
-        },
         department: { 
             type: String, 
             required: [true, 'Department is required'],
             enum: {
-                values: ['Manager', 'CTO', 'Senior Engineer (8-10 years)'],
+                values: DepartmentEnum,
                 message: '{VALUE} is not a valid department'
             }
+        },
+        profilePicture: { 
+            type: String,
+            required: false
         },
     },
     {
@@ -51,4 +53,4 @@ const ManagersSchema: Schema<ManagerSchemaTypee> = new Schema(
     }
 );
 
-export const ManagersModel = (models.Manager || model<ManagerSchemaTypee>('Manager', ManagersSchema));
+export const ManagersModel = models.Manager || model<ManagerSchemaType>('Manager', ManagersSchema);

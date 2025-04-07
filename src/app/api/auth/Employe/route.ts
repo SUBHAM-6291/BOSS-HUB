@@ -1,79 +1,50 @@
-import connectToDatabase from "@/Backend/lib/Db.connect";
-import Employee from "@/Backend/Models/Employes.Model";
-import { EmployeeSchemaType } from "@/Backend/Schema/Employe.Schema";
 import { NextRequest, NextResponse } from "next/server";
-
-interface EmployeeRequestBody extends EmployeeSchemaType {
-  employeeId: string;
-}
+import connectToDatabase from "@/Backend/lib/Db.connect";
+import { ManagersModel } from "@/Backend/Models/Manager";
+import { handleImageUpload } from "@/Backend/Middleware/Cloudinary/cloud.middleware";
 
 export async function POST(req: NextRequest) {
+  await connectToDatabase();
+  const formData = await req.formData();
+
+  const rawData = {
+    name: formData.get("name")?.toString() || "Unknown User",
+    email: formData.get("email")?.toString() || `user-${Date.now()}@example.com`,
+    employeeUID: formData.get("employeeUID")?.toString() || `EMP-${Date.now()}`,
+    department: formData.get("department")?.toString() || "Manager",
+  };
+
   try {
-    await connectToDatabase();
+    const existingManager = await ManagersModel.findOne({ email: rawData.email });
 
-    const body: EmployeeRequestBody = await req.json();
-    const { employeeId, fullName, email, employeeIdNumber, workingHours } = body;
-
-    if (!employeeId || !fullName || !email || !employeeIdNumber || !workingHours) {
+    if (existingManager) {
       return NextResponse.json(
-        {
-          status: "error",
-          message:
-            "Employee ID, full name, email, employee ID number, and working hours are required",
-        },
-        { status: 400 }
+        { status: "success", message: "Welcome back!", data: existingManager },
+        { status: 200 }
       );
     }
 
-    const existingEmployee = await Employee.findOne({
-      $or: [{ email }, { employeeIdNumber }],
-    });
+    const file = formData.get("profilePicture") as File | null;
+    const sessionImage = formData.get("sessionImage")?.toString() || null;
+    const profilePictureUrl = await handleImageUpload(file, sessionImage, rawData.employeeUID);
 
-    if (existingEmployee) {
-      return NextResponse.json(
-        {
-          status: "error",
-          message: "Employee with this email or employee ID number already exists",
-        },
-        { status: 409 }
-      );
-    }
-
-    const newEmployee = new Employee({
-      employeeId,
-      fullName,
-      email,
-      employeeIdNumber,
-      workingHours,
+    const newManager = new ManagersModel({
+      ...rawData,
+      profilePicture: profilePictureUrl,
     });
-    const savedEmployee = await newEmployee.save();
+    await newManager.save();
 
     return NextResponse.json(
-      {
-        status: "success",
-        message: "Employee registered successfully",
-        data: savedEmployee,
-      },
+      { status: "success", message: "New user created!", data: newManager },
       { status: 201 }
     );
-  } catch (error: any) {
-    if (error.code === 11000) {
-      return NextResponse.json(
-        {
-          status: "error",
-          message: "Duplicate entry found for email or employee ID",
-        },
-        { status: 409 }
-      );
-    }
-
-    console.error("Error in employee registration:", error);
+  } catch (error) {
+    console.error("Error: ", error);
     return NextResponse.json(
-      {
-        status: "error",
-        message: "Internal server error",
-      },
+      { status: "error", message: "Internal server error", error: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }
 }
+
+export const config = { api: { bodyParser: false } };

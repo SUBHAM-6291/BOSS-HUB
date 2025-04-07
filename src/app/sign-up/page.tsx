@@ -52,7 +52,7 @@ export default function SignUpPage() {
     } catch (error: any) {
       setError('root', { 
         type: 'manual', 
-        message: error.message || `Failed to sign up with ${provider}. Please try again.` 
+        message: error.message || `welcome back pls chose nexttime sigin ${provider}.` 
       });
     } finally {
       setIsOAuthLoading(false);

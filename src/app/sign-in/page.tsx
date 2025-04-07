@@ -81,7 +81,7 @@ export default function SignInPage() {
           </button>
         </form>
         
-        {/* Error and Success Messages */}
+        {}
         {error && <p className="mt-3 text-center text-sm text-red-500">{error}</p>}
         {successMessage && <p className="mt-3 text-center text-sm text-green-500">{successMessage}</p>}
 

@@ -40,7 +40,7 @@ import TaskManagement from "@/app/Components/Managers-/TaskManagement";
 import BudgetTracking from "@/app/Components/Managers-/BudgetTracking";
 import RequestBudgetIncreases from "@/app/Components/Managers-/RequestBudgetIncreases";
 import ApproveHours from "@/app/Components/Managers-/ApproveHours";
-import Messaging from "@/app/Components/Managers-/Messaging";
+import Messaging from "@/app/Components/Managers-/video";
 import NotifyEmployees from "@/app/Components/Managers-/NotifyEmployees";
 import Schedules from "@/app/Components/Managers-/Schedules";
 import ShiftOptimization from "@/app/Components/Managers-/ShiftOptimization";

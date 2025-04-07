@@ -2,7 +2,9 @@ import React from 'react'
 
 const SettingsComponent = () => {
   return (
-    <div>SettingsComponent</div>
+    <div className=' text-white font-bold text-4xl'>
+      comming soon ...
+    </div>
   )
 }
 
